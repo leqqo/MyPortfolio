@@ -16,9 +16,9 @@ struct ChartPieView: View {
     
     var displayedDateRange: String {
         if let start = calendarViewModel.selectedStartDate, let end = calendarViewModel.selectedEndDate {
-            return "\(start.formattedMonthCapitalized()) - \(end.formattedMonthCapitalized())"
+            return "\(start.formattedMonthCapitalized()) - \(end.formattedMonthCapitalized()) \(calendarViewModel.currentYearInt)"
         } else if let start = calendarViewModel.selectedStartDate {
-            return start.formattedMonthCapitalized()
+            return "\(start.formattedMonthCapitalized()) \(calendarViewModel.currentYearInt)"
         } else {
             return calendarViewModel.currentDate.formattedMonthCapitalized()
         }
@@ -29,66 +29,67 @@ struct ChartPieView: View {
     }
     
     var body: some View {
-        
-        VStack(spacing: 12) {
-            if !mainScreenViewModel.transactions.isEmpty {
-                Text(displayedDateRange)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.blue)
-                    .onTapGesture {
-                        calendarViewModel.isCalendarShow.toggle()
+        VStack {
+            if mainScreenViewModel.transactions.isEmpty {
+                VStack(spacing: 8) {
+                    Text("Транзакции отсутствуют!")
+                    Text("Чтобы добавить транзакцию, нажмите")
+                    HStack(spacing: 6) {
+                        Image(systemName: "plus")
+                            .foregroundStyle(.blue)
+                            .font(.title)
+                        Text("в правом верхнем углу")
                     }
-                    .sheet(isPresented: $calendarViewModel.isCalendarShow) {
-                        CalendarView()
-                    }
+                }
+                .padding(.top, 150)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.secondary)
             }
-            
-            VStack {
-                if mainScreenViewModel.transactions.isEmpty {
-                    VStack(spacing: 8) {
-                        Text("Транзакции отсутствуют!")
-                        Text("Чтобы добавить транзакцию, нажмите")
-                        HStack(spacing: 6) {
-                            Image(systemName: "plus")
-                                .foregroundStyle(.blue)
-                                .font(.title)
-                            Text("в правом верхнем углу")
+            VStack(spacing: 8) {
+                if !mainScreenViewModel.transactions.isEmpty {
+                    Text(displayedDateRange)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.blue)
+                        .onTapGesture {
+                            calendarViewModel.isCalendarShow.toggle()
                         }
-                    }
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.secondary)
-                } else {
-                    VStack(spacing: 12) {
-                        if !mainScreenViewModel.cachedExpensesByCategory.isEmpty {
-                            Text("Сумма расходов - \(transactionsTotalAmount.formatAmount())")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.blue)
-                            
-                            Chart(mainScreenViewModel.cachedExpensesByCategory) { expense in
-                                SectorMark(
-                                    angle: .value("Сумма", expense.amount),
-                                    innerRadius: .ratio(0.5)
-                                )
-                                .foregroundStyle(chartViewModel.getColor(for: expense.category.title))
-                            }
-                            .frame(height: 150)
-                            .padding()
-                            .chartLegend(.hidden)
-                            
-                            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), alignment: .leading, spacing: 10) {
-                                ForEach(mainScreenViewModel.cachedExpensesByCategory) { expense in
-                                    HStack {
-                                        Circle()
-                                            .fill(chartViewModel.getColor(for: expense.category.title))
-                                            .frame(width: 12, height: 12)
-                                        
-                                        Text(expense.category.title)
-                                            .font(.system(size: 14))
-                                            .foregroundColor(.primary)
-                                    }
+                        .sheet(isPresented: $calendarViewModel.isCalendarShow) {
+                            CalendarView()
+                        }
+                }
+                
+                VStack(spacing: 8) {
+                    if !mainScreenViewModel.cachedExpensesByCategory.isEmpty {
+                        Text("Сумма расходов - \(transactionsTotalAmount.formatAmount())")
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.blue)
+                        
+                        Chart(mainScreenViewModel.cachedExpensesByCategory) { expense in
+                            SectorMark(
+                                angle: .value("Сумма", expense.amount),
+                                innerRadius: .ratio(0.5)
+                            )
+                            .foregroundStyle(chartViewModel.getColor(for: expense.category.title))
+                        }
+                        .frame(height: 150)
+                        .padding()
+                        .chartLegend(.hidden)
+                        
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), alignment: .leading, spacing: 10) {
+                            ForEach(mainScreenViewModel.cachedExpensesByCategory) { expense in
+                                HStack {
+                                    Circle()
+                                        .fill(chartViewModel.getColor(for: expense.category.title))
+                                        .frame(width: 12, height: 12)
+                                    
+                                    Text(expense.category.title)
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.primary)
                                 }
                             }
-                        } else {
+                        }
+                    } else {
+                        if !mainScreenViewModel.transactions.isEmpty {
                             Text("Транзакции за выбранный период отсутствуют")
                                 .foregroundStyle(Color(uiColor: .systemGray2))
                                 .multilineTextAlignment(.center)
@@ -96,8 +97,8 @@ struct ChartPieView: View {
                         }
                     }
                 }
+                .frame(height: 250)
             }
-            .frame(height: 250)
         }
         .padding(.horizontal)
         .onAppear {
