@@ -30,6 +30,10 @@ class CalendarViewModel: ObservableObject {
     let calendar = Calendar.current
     let currentDate: Date = Date()
     
+    var currentYearInt: Int {
+        return calendar.component(.year, from: currentDate)
+    }
+    
     func scrollToCurrentMonth(scrollViewProxy: ScrollViewProxy) {
         let currentYearInt = calendar.component(.year, from: currentDate)
         let selectedYearInt = calendar.component(.year, from: currentYear)
