@@ -19,11 +19,12 @@ class MainScreenViewModel: ObservableObject {
         }
     }
     
+    @Published var currentDate: Date = Date()
     @Published var selectedDate: Date = Date()
     
     var groupedTasksByHour: [(String, [Task])] {
         let filteredTasks = tasks.filter {
-            Calendar.current.isDate($0.date, inSameDayAs: selectedDate)
+            Calendar.current.isDate($0.date, inSameDayAs: currentDate)
         }
 
         let grouped = Dictionary(grouping: filteredTasks) { task in
@@ -37,7 +38,7 @@ class MainScreenViewModel: ObservableObject {
     
     func tasks(for timeString: String) -> [Task] {
         return tasks.filter { task in
-            guard Calendar.current.isDate(task.date, inSameDayAs: selectedDate) else { return false }
+            guard Calendar.current.isDate(task.date, inSameDayAs: currentDate) else { return false }
             let components = Calendar.current.dateComponents([.hour, .minute], from: task.date)
             if let hour = components.hour, let minute = components.minute {
                 let taskTime = String(format: "%02d:%02d", hour, minute)
