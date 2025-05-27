@@ -13,6 +13,7 @@
 		CE814BE02DA7166000E00604 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE814BDF2DA7166000E00604 /* Preview Assets.xcassets */; };
 		CE814BE72DA7171C00E00604 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE814BE62DA7171C00E00604 /* Task.swift */; };
 		CE814BE92DA7184700E00604 /* MainScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE814BE82DA7184700E00604 /* MainScreenViewModel.swift */; };
+		CE8849E32DE4EC60004DD8D1 /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8849E22DE4EC60004DD8D1 /* TaskRowView.swift */; };
 		CE88CF5C2DCBA0B3004F3465 /* SwipeActions in Frameworks */ = {isa = PBXBuildFile; productRef = CE88CF5B2DCBA0B3004F3465 /* SwipeActions */; };
 /* End PBXBuildFile section */
 
@@ -24,6 +25,7 @@
 		CE814BDF2DA7166000E00604 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		CE814BE62DA7171C00E00604 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		CE814BE82DA7184700E00604 /* MainScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenViewModel.swift; sourceTree = "<group>"; };
+		CE8849E22DE4EC60004DD8D1 /* TaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 				CE814BE62DA7171C00E00604 /* Task.swift */,
 				CE814BDA2DA7165F00E00604 /* MainScreenView.swift */,
 				CE814BE82DA7184700E00604 /* MainScreenViewModel.swift */,
+				CE8849E22DE4EC60004DD8D1 /* TaskRowView.swift */,
 				CE814BDC2DA7166000E00604 /* Assets.xcassets */,
 				CE814BDE2DA7166000E00604 /* Preview Content */,
 			);
@@ -154,6 +157,7 @@
 				CE814BDB2DA7165F00E00604 /* MainScreenView.swift in Sources */,
 				CE814BE92DA7184700E00604 /* MainScreenViewModel.swift in Sources */,
 				CE814BE72DA7171C00E00604 /* Task.swift in Sources */,
+				CE8849E32DE4EC60004DD8D1 /* TaskRowView.swift in Sources */,
 				CE814BD92DA7165F00E00604 /* ToDoListApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
