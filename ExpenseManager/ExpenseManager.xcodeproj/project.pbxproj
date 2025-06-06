@@ -29,6 +29,7 @@
 		CEA5BFFC2D9938E4008A0F7B /* TabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA5BFFB2D9938E4008A0F7B /* TabBarView.swift */; };
 		CEA5BFFE2D993989008A0F7B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA5BFFD2D993989008A0F7B /* SettingsView.swift */; };
 		CEA6EC4C2DA5724B0073F61F /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA6EC4B2DA5724B0073F61F /* Extensions.swift */; };
+		CECC314E2DF36E500099263E /* TextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC314D2DF36E500099263E /* TextFieldView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +56,7 @@
 		CEA5BFFB2D9938E4008A0F7B /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
 		CEA5BFFD2D993989008A0F7B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		CEA6EC4B2DA5724B0073F61F /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		CECC314D2DF36E500099263E /* TextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 				CE64F4F22D93FD7D009BA640 /* CategoryGridView.swift */,
 				CE83E7432DA310CD003E05FF /* SearchBar.swift */,
 				CEA6EC4B2DA5724B0073F61F /* Extensions.swift */,
+				CECC314D2DF36E500099263E /* TextFieldView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -231,6 +234,7 @@
 				CE7FC3A72D96B981001592E7 /* CategoryExpense.swift in Sources */,
 				CE64F4F82D93FE12009BA640 /* Transaction.swift in Sources */,
 				CE7FC3A92D96BCE6001592E7 /* CategoryViewModel.swift in Sources */,
+				CECC314E2DF36E500099263E /* TextFieldView.swift in Sources */,
 				CE7C4C022D93CA3A007722BB /* MainScreenView.swift in Sources */,
 				CEA5BFFE2D993989008A0F7B /* SettingsView.swift in Sources */,
 				CE7F38592D9D7CBD007FCCD8 /* CalendarViewModel.swift in Sources */,
