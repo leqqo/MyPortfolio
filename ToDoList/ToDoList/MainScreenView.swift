@@ -20,6 +20,7 @@ struct MainScreenView: View {
     @State private var openSwipeID: UUID?
     @State private var editingTaskID: UUID?
     @State private var titleErrors: [UUID: Bool] = [:]
+    @State private var errorMessage: String?
     
     private let swipePublisher = PassthroughSubject<UUID?, Never>()
     
@@ -84,13 +85,21 @@ struct MainScreenView: View {
     @ViewBuilder
     var addButtonView: some View {
         Button(action: {
-            if !taskText.isEmpty && taskText.count > 2 {
+            let trimmed = taskText.trimmingCharacters(in: .whitespaces)
+            
+            if trimmed.isEmpty {
+                errorMessage = nil
+                return
+            } else if trimmed.count < 3 {
+                errorMessage = "Минимум 3 символа"
+                return
+            } else {
+                errorMessage = nil
                 
-                let task = Task(title: taskText, date: viewModel.selectedDate)
+                let task = Task(title: trimmed, date: viewModel.selectedDate)
                 viewModel.tasks.append(task)
                 taskText = ""
             }
-            
         }) {
             Text("Добавить")
                 .frame(maxWidth: .infinity)
@@ -98,7 +107,7 @@ struct MainScreenView: View {
                 .background(Color.blue)
                 .foregroundColor(.white)
                 .fontWeight(.medium)
-                .cornerRadius(12)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -106,11 +115,18 @@ struct MainScreenView: View {
     
     @ViewBuilder
     var addTaskView: some View {
-        TextField("Введите задачу", text: $taskText)
-            .padding(12)
-            .background(Color(UIColor.systemGray6))
-            .cornerRadius(12)
-            .padding(.top, 8)
+        ZStack(alignment: .trailing) {
+            TextField("Введите задачу", text: $taskText)
+            if let error = errorMessage {
+                Text(error)
+                    .foregroundColor(.red)
+                    .font(.subheadline)
+            }
+        }
+        .padding(12)
+        .background(Color(UIColor.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.top, 8)
     }
     
     @ViewBuilder
@@ -139,11 +155,9 @@ struct MainScreenView: View {
     @ViewBuilder
     func emptyTasksView(geometry: GeometryProxy) -> some View {
         VStack {
-            Spacer()
             Text("Задачи отсутствуют")
                 .font(.title3)
                 .foregroundStyle(Color(UIColor.systemGray))
-            Spacer()
         }
         .frame(minHeight: geometry.size.height / 2)
         .frame(maxWidth: .infinity)
