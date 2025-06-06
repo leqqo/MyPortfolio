@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  MainScreenView.swift
 //  ExpenseManager
 //
 //  Created by User on 26.03.2025.
@@ -14,8 +14,8 @@ struct MainScreenView: View {
     
     @State private var showAddExpense: Bool = false
     @State private var showActionSheet: Bool = false
+    @State var showEditView: Bool = false
     @State private var selectedTransaction: Transaction?
-    @State private var showEditView: Bool = false
     @State private var selection = 0
     
     var body: some View {
@@ -24,63 +24,22 @@ struct MainScreenView: View {
                 VStack {
                     ChartPieView()
                         .padding(.top, 28)
-                    
-                    Picker("Picker", selection: $selection) {
-                        Text("Статистика").tag(0)
-                        Text("История").tag(1)
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.top)
-                    .padding(.horizontal)
-                    .opacity(viewModel.transactions.isEmpty ? 0 : 1)
+                    PickerView(viewModel: viewModel, selection: $selection)
                     
                     if selection == 0 {
-                        LazyVStack(spacing: 12) {
-                            ForEach(viewModel.cachedExpensesByCategory) { transaction in
-                                HStackView(transactionTitle: transaction.title, categoryIcon: transaction.category.icon, amount: Int(transaction.amount))
-                            }
-                        }
-                        .padding(.horizontal)
-                        .padding(.top)
+                        TransactionStatisticsView(viewModel: viewModel)
                     } else {
-                        LazyVStack(spacing: 12) {
-                            ForEach(viewModel.groupedTransactions, id: \.key) { key, dayTransactions in
-                                Section(header: Text(key)
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.secondary)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.leading, 4)
-                                    .padding(.top)
-                                ) {
-                                    ForEach(dayTransactions) { transaction in
-                                        HStackView(transactionTitle: transaction.category.title, categoryIcon: transaction.icon, amount: transaction.amount)
-                                        .background(Color(uiColor: .systemBackground))
-                                        .clipShape(Rectangle())
-                                        .onTapGesture {
-                                            selectedTransaction = transaction
-                                            showActionSheet.toggle()
-                                        }
-                                    }
+                        TransactionHistoryView(viewModel: viewModel, selectedTransaction: $selectedTransaction, showActionSheet: $showActionSheet)
+                            .padding(.horizontal)
+                            .confirmationDialog("Выберите действие", isPresented: $showActionSheet, titleVisibility: .hidden) {
+                                Button("Редактировать") {
+                                    showEditView = true
                                 }
+                                Button("Удалить", role: .destructive) {
+                                    deleteTransaction(transaction: selectedTransaction)
+                                }
+                                Button("Отмена", role: .cancel) { }
                             }
-                        }
-                        .padding(.horizontal)
-                        .actionSheet(isPresented: $showActionSheet) {
-                            ActionSheet(
-                                title: Text("Выберите действие"),
-                                message: Text("Что вы хотите сделать с этой транзакцией?"),
-                                buttons: [
-                                    .default(Text("Редактировать")) {
-                                        editTransaction(transaction: selectedTransaction)
-                                    },
-                                    .destructive(Text("Удалить")) {
-                                        deleteTransaction(transaction: selectedTransaction)
-                                    },
-                                    .cancel()
-                                ]
-                            )
-                        }
                     }
                 }
                 .toolbar {
@@ -91,18 +50,16 @@ struct MainScreenView: View {
                         }
                     }
                 }
-                .toolbarBackground((Color(uiColor: .systemBackground)), for: .navigationBar)
-                .toolbarBackground(.visible, for: .navigationBar)
+                .applyDefaultNavigationBarStyle()
                 .sheet(isPresented: $showEditView) {
                     EditTransactionView(transaction: selectedTransaction)
                 }
             }
         }
-            .sheet(isPresented: $showAddExpense, content: {
-                AddExpenseView()
-            })
+        .sheet(isPresented: $showAddExpense, content: {
+            AddExpenseView()
+        })
     }
-    
     func editTransaction(transaction: Transaction?) {
         guard transaction != nil else { return }
         showEditView.toggle()
@@ -140,6 +97,70 @@ struct HStackView: View {
             Spacer()
             Text("\(amount.formatAmount())")
                 .fontWeight(.medium)
+        }
+    }
+}
+
+struct PickerView: View {
+    
+    @ObservedObject var viewModel: MainScreenViewModel
+    @Binding var selection: Int
+    
+    var body: some View {
+        Picker("Picker", selection: $selection) {
+            Text("Статистика").tag(0)
+            Text("История").tag(1)
+        }
+        .pickerStyle(.segmented)
+        .padding(.top)
+        .padding(.horizontal)
+        .opacity(viewModel.transactions.isEmpty ? 0 : 1)
+    }
+}
+
+struct TransactionStatisticsView: View {
+    
+    @ObservedObject var viewModel: MainScreenViewModel
+    
+    var body: some View {
+        LazyVStack(spacing: 12) {
+            ForEach(viewModel.cachedExpensesByCategory) { transaction in
+                HStackView(transactionTitle: transaction.title, categoryIcon: transaction.category.icon, amount: Int(transaction.amount))
+            }
+        }
+        .padding(.horizontal)
+        .padding(.top)
+    }
+}
+
+struct TransactionHistoryView: View {
+    
+    @ObservedObject var viewModel: MainScreenViewModel
+    @Binding var selectedTransaction: Transaction?
+    @Binding var showActionSheet: Bool
+    
+    var body: some View {
+        LazyVStack(spacing: 12) {
+            ForEach(viewModel.groupedTransactions, id: \.key) { key, dayTransactions in
+                Section(header: Text(key)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 4)
+                    .padding(.top)
+                ) {
+                    ForEach(dayTransactions) { transaction in
+                        HStackView(transactionTitle: transaction.category.title, categoryIcon: transaction.icon, amount: transaction.amount)
+                            .background(Color(uiColor: .systemBackground))
+                            .clipShape(Rectangle())
+                            .onTapGesture {
+                                selectedTransaction = transaction
+                                showActionSheet.toggle()
+                            }
+                    }
+                }
+            }
         }
     }
 }
