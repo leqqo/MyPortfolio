@@ -95,4 +95,7 @@ struct TaskRowView: View {
     }
 }
 
+#Preview {
+    MainScreenView()
+}
 
