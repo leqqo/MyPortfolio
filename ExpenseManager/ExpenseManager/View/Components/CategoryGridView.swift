@@ -31,12 +31,12 @@ struct CategoryGridView: View {
                                 .foregroundColor(.blue)
                             Text(category.title)
                                 .font(.body)
+                                .foregroundStyle(.primary)
                         }
                         .padding(4)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(selectedCategory?.title == category.title ? Color.gray.opacity(0.1) : Color(UIColor.systemBackground))
-                        .foregroundColor(.black)
-                        .cornerRadius(10)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                     .buttonStyle(.plain)
                 }
