@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 extension Date {
     func formattedMonthCapitalized() -> String {
@@ -30,5 +31,13 @@ extension Int {
         
         let formattedAmount = formatter.string(from: NSNumber(value: self)) ?? "\(0)"
         return "\(formattedAmount) ₴"
+    }
+}
+
+extension View {
+    func applyDefaultNavigationBarStyle() -> some View {
+        self
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Color(uiColor: .systemBackground), for: .navigationBar)
     }
 }
