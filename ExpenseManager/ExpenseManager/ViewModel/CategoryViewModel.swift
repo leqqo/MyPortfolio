@@ -106,7 +106,7 @@ class CategoryViewModel: ObservableObject {
             "gear"
         ])
     ]
-
+    
     
     @Published var categories: [Category] = [
         
@@ -154,23 +154,23 @@ class CategoryViewModel: ObservableObject {
     }
     
     private func loadCategories() {
-            if let data = UserDefaults.standard.data(forKey: "categories") {
-                do {
-                    categories = try JSONDecoder().decode([Category].self, from: data)
-                } catch {
-                    print("Не удалось загрузить категории: \(error)")
-                }
-            }
-        }
-        
-        private func saveCategories() {
+        if let data = UserDefaults.standard.data(forKey: "categories") {
             do {
-                let data = try JSONEncoder().encode(categories)
-                UserDefaults.standard.set(data, forKey: "categories")
+                categories = try JSONDecoder().decode([Category].self, from: data)
             } catch {
-                print("Не удалось сохранить категории: \(error)")
+                print("Не удалось загрузить категории: \(error)")
             }
         }
+    }
+    
+    private func saveCategories() {
+        do {
+            let data = try JSONEncoder().encode(categories)
+            UserDefaults.standard.set(data, forKey: "categories")
+        } catch {
+            print("Не удалось сохранить категории: \(error)")
+        }
+    }
     
     var filteredCategories: [Category] {
         if searchText.isEmpty {
