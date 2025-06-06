@@ -35,7 +35,6 @@ class MainScreenViewModel: ObservableObject {
         return grouped.sorted { $0.key < $1.key }
     }
 
-    
     func tasks(for timeString: String) -> [Task] {
         return tasks.filter { task in
             guard Calendar.current.isDate(task.date, inSameDayAs: currentDate) else { return false }
