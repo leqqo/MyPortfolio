@@ -21,9 +21,7 @@ class MainScreenViewModel: ObservableObject {
             updateExpensesByCategory()
         }
     }
-    
     @Published var cachedExpensesByCategory: [CategoryExpense] = []
-    
     var groupedTransactions: [(key: String, value: [Transaction])] = []
     
     private func updateGroupedTransactions() {

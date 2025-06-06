@@ -58,19 +58,17 @@ class ChartPieViewModel: ObservableObject {
             saveColors()
         }
     }
-
-
     
     func getColor(for category: String) -> Color {
-           if let hex = categoryColors[category] {
-               return Color.fromHex(hex)
-           }
-           return .gray
-       }
+        if let hex = categoryColors[category] {
+            return Color.fromHex(hex)
+        }
+        return .gray
+    }
     
     func setColor(for category: String, color: Color) {
-           categoryColors[category] = color.toHex()
-       }
+        categoryColors[category] = color.toHex()
+    }
     
     func generateRandomColor() -> Color {
         var randomColor: Color
@@ -83,26 +81,26 @@ class ChartPieViewModel: ObservableObject {
                 blue: Double.random(in: 0...1)
             )
         } while existingColorValues.contains(randomColor.toHex())
-
+        
         return randomColor
     }
     
     private func loadColors() {
-            if let data = UserDefaults.standard.data(forKey: "categoryColors") {
-                do {
-                    categoryColors = try JSONDecoder().decode([String:String].self, from: data)
-                } catch {
-                    print("Не удалось загрузить категории: \(error)")
-                }
-            }
-        }
-        
-        private func saveColors() {
+        if let data = UserDefaults.standard.data(forKey: "categoryColors") {
             do {
-                let data = try JSONEncoder().encode(categoryColors)
-                UserDefaults.standard.set(data, forKey: "categoryColors")
+                categoryColors = try JSONDecoder().decode([String:String].self, from: data)
             } catch {
-                print("Не удалось сохранить категории: \(error)")
+                print("Не удалось загрузить категории: \(error)")
             }
         }
+    }
+    
+    private func saveColors() {
+        do {
+            let data = try JSONEncoder().encode(categoryColors)
+            UserDefaults.standard.set(data, forKey: "categoryColors")
+        } catch {
+            print("Не удалось сохранить категории: \(error)")
+        }
+    }
 }
