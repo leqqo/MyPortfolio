@@ -11,7 +11,7 @@ import Foundation
 class MainScreenViewModel: ObservableObject {
     
     static let shared = MainScreenViewModel()
-    
+
     private init() { loadTransactions() }
     
     @Published var transactions = [Transaction]() {
@@ -19,9 +19,11 @@ class MainScreenViewModel: ObservableObject {
             saveTransactions()
             updateGroupedTransactions()
             updateExpensesByCategory()
+            calculateDailyExpenses()
         }
     }
     @Published var cachedExpensesByCategory: [CategoryExpense] = []
+    @Published var cachedDailyExpenses: [DailyExpense] = []
     var groupedTransactions: [(key: String, value: [Transaction])] = []
     
     private func updateGroupedTransactions() {
@@ -50,6 +52,32 @@ class MainScreenViewModel: ObservableObject {
             return (key: key, value: value)
         }
         .sorted { $0.key > $1.key }
+    }
+    
+    private func calculateDailyExpenses() {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let defaultStartDate = calendar.date(from: calendar.dateComponents([.year, .month], from: today))!
+        let defaultEndDate = calendar.date(byAdding: DateComponents(month: 1, second: -1), to: defaultStartDate)!
+        
+        let allDates = stride(from: defaultStartDate, through: today, by: 60 * 60 * 24).map {
+            calendar.startOfDay(for: $0)
+        }
+        
+        let filtered = transactions.filter { transaction in
+            let transactionDate = calendar.startOfDay(for: transaction.date)
+            return transactionDate >= defaultStartDate && transactionDate <= today
+        }
+        
+        let grouped = Dictionary(grouping: filtered) { transaction in
+            calendar.startOfDay(for: transaction.date)
+        }.mapValues { transactions in
+            transactions.reduce(0) { $0 + Double($1.amount) }
+        }
+        
+        cachedDailyExpenses = allDates.map { date in
+            return DailyExpense(date: date, totalAmount: grouped[date] ?? 0)
+        }
     }
     
     func updateExpensesByCategory(singleDate: Date? = CalendarViewModel.shared.selectedStartDate, startDate: Date? = CalendarViewModel.shared.selectedStartDate, endDate: Date? = CalendarViewModel.shared.selectedEndDate) -> Void {
@@ -98,4 +126,8 @@ class MainScreenViewModel: ObservableObject {
             print("Не удалось сохранить транзакции: \(error)")
         }
     }
+}
+
+#Preview {
+    MainScreenView()
 }
