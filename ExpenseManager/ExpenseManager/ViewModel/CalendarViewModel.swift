@@ -121,6 +121,6 @@ class CalendarViewModel: ObservableObject {
 }
 
 #Preview {
-    ChartPieView()
+    PieChartView()
 }
 
