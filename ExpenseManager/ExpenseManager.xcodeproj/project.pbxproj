@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CE64F4ED2D93FB72009BA640 /* MainScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64F4EC2D93FB71009BA640 /* MainScreenViewModel.swift */; };
-		CE64F4EF2D93FC1F009BA640 /* ChartPieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64F4EE2D93FC1F009BA640 /* ChartPieView.swift */; };
+		CE64F4EF2D93FC1F009BA640 /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64F4EE2D93FC1F009BA640 /* PieChartView.swift */; };
 		CE64F4F12D93FD05009BA640 /* EditTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64F4F02D93FD05009BA640 /* EditTransactionView.swift */; };
 		CE64F4F32D93FD7D009BA640 /* CategoryGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64F4F22D93FD7D009BA640 /* CategoryGridView.swift */; };
 		CE64F4F52D93FDD2009BA640 /* AddExpenseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE64F4F42D93FDD2009BA640 /* AddExpenseView.swift */; };
@@ -26,6 +26,9 @@
 		CE81A0512D9C72F200409530 /* ChartPieViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE81A0502D9C72F200409530 /* ChartPieViewModel.swift */; };
 		CE81EF502DA141D400E9D240 /* IconSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE81EF4F2DA141D400E9D240 /* IconSection.swift */; };
 		CE83E7442DA310CD003E05FF /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE83E7432DA310CD003E05FF /* SearchBar.swift */; };
+		CE87526D2DF6101A00201337 /* DailyExpense.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE87526C2DF6101A00201337 /* DailyExpense.swift */; };
+		CE87526F2DF613F300201337 /* BarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE87526E2DF613F300201337 /* BarChartView.swift */; };
+		CE8752712DF64AC400201337 /* ChartType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8752702DF64AC400201337 /* ChartType.swift */; };
 		CEA5BFFC2D9938E4008A0F7B /* TabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA5BFFB2D9938E4008A0F7B /* TabBarView.swift */; };
 		CEA5BFFE2D993989008A0F7B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA5BFFD2D993989008A0F7B /* SettingsView.swift */; };
 		CEA6EC4C2DA5724B0073F61F /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA6EC4B2DA5724B0073F61F /* Extensions.swift */; };
@@ -34,7 +37,7 @@
 
 /* Begin PBXFileReference section */
 		CE64F4EC2D93FB71009BA640 /* MainScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenViewModel.swift; sourceTree = "<group>"; };
-		CE64F4EE2D93FC1F009BA640 /* ChartPieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartPieView.swift; sourceTree = "<group>"; };
+		CE64F4EE2D93FC1F009BA640 /* PieChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
 		CE64F4F02D93FD05009BA640 /* EditTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTransactionView.swift; sourceTree = "<group>"; };
 		CE64F4F22D93FD7D009BA640 /* CategoryGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryGridView.swift; sourceTree = "<group>"; };
 		CE64F4F42D93FDD2009BA640 /* AddExpenseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExpenseView.swift; sourceTree = "<group>"; };
@@ -53,6 +56,9 @@
 		CE81A0502D9C72F200409530 /* ChartPieViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartPieViewModel.swift; sourceTree = "<group>"; };
 		CE81EF4F2DA141D400E9D240 /* IconSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconSection.swift; sourceTree = "<group>"; };
 		CE83E7432DA310CD003E05FF /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		CE87526C2DF6101A00201337 /* DailyExpense.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyExpense.swift; sourceTree = "<group>"; };
+		CE87526E2DF613F300201337 /* BarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChartView.swift; sourceTree = "<group>"; };
+		CE8752702DF64AC400201337 /* ChartType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartType.swift; sourceTree = "<group>"; };
 		CEA5BFFB2D9938E4008A0F7B /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
 		CEA5BFFD2D993989008A0F7B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		CEA6EC4B2DA5724B0073F61F /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -77,6 +83,7 @@
 				CE64F4F92D93FE76009BA640 /* Category.swift */,
 				CE7FC3A62D96B981001592E7 /* CategoryExpense.swift */,
 				CE81EF4F2DA141D400E9D240 /* IconSection.swift */,
+				CE87526C2DF6101A00201337 /* DailyExpense.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -125,6 +132,7 @@
 				CE83E7432DA310CD003E05FF /* SearchBar.swift */,
 				CEA6EC4B2DA5724B0073F61F /* Extensions.swift */,
 				CECC314D2DF36E500099263E /* TextFieldView.swift */,
+				CE87526E2DF613F300201337 /* BarChartView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -137,7 +145,7 @@
 				CE7C4C012D93CA3A007722BB /* MainScreenView.swift */,
 				CE64F4F42D93FDD2009BA640 /* AddExpenseView.swift */,
 				CE64F4F02D93FD05009BA640 /* EditTransactionView.swift */,
-				CE64F4EE2D93FC1F009BA640 /* ChartPieView.swift */,
+				CE64F4EE2D93FC1F009BA640 /* PieChartView.swift */,
 				CE7F38562D9D7CAD007FCCD8 /* CalendarView.swift */,
 				CE64F4FB2D940020009BA640 /* CategoryView.swift */,
 				CEA5BFFD2D993989008A0F7B /* SettingsView.swift */,
@@ -152,6 +160,7 @@
 				CE7FC3A82D96BCE6001592E7 /* CategoryViewModel.swift */,
 				CE7F38582D9D7CBD007FCCD8 /* CalendarViewModel.swift */,
 				CE81A0502D9C72F200409530 /* ChartPieViewModel.swift */,
+				CE8752702DF64AC400201337 /* ChartType.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -227,9 +236,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE64F4F32D93FD7D009BA640 /* CategoryGridView.swift in Sources */,
+				CE87526F2DF613F300201337 /* BarChartView.swift in Sources */,
+				CE87526D2DF6101A00201337 /* DailyExpense.swift in Sources */,
 				CE64F4F12D93FD05009BA640 /* EditTransactionView.swift in Sources */,
 				CE81EF502DA141D400E9D240 /* IconSection.swift in Sources */,
 				CEA5BFFC2D9938E4008A0F7B /* TabBarView.swift in Sources */,
+				CE8752712DF64AC400201337 /* ChartType.swift in Sources */,
 				CE7F38572D9D7CAD007FCCD8 /* CalendarView.swift in Sources */,
 				CE7FC3A72D96B981001592E7 /* CategoryExpense.swift in Sources */,
 				CE64F4F82D93FE12009BA640 /* Transaction.swift in Sources */,
@@ -246,7 +258,7 @@
 				CEA6EC4C2DA5724B0073F61F /* Extensions.swift in Sources */,
 				CE64F4F52D93FDD2009BA640 /* AddExpenseView.swift in Sources */,
 				CE64F4ED2D93FB72009BA640 /* MainScreenViewModel.swift in Sources */,
-				CE64F4EF2D93FC1F009BA640 /* ChartPieView.swift in Sources */,
+				CE64F4EF2D93FC1F009BA640 /* PieChartView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
