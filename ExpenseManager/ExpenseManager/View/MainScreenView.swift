@@ -17,17 +17,28 @@ struct MainScreenView: View {
     @State var showEditView: Bool = false
     @State private var selectedTransaction: Transaction?
     @State private var selection = 0
+    @State private var selectedChart: ChartType = .byDay
     
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack {
-                    ChartPieView()
-                        .padding(.top, 28)
-                    PickerView(viewModel: viewModel, selection: $selection)
+                    ChartTypePickerView(viewModel: viewModel, selectedChart: $selectedChart)
+                        .padding(.top, 8)
+                    
+                    if selectedChart == .byDay {
+                        BarChartView()
+                            .padding(.vertical)
+                    } else if selectedChart == .byCategory{
+                        PieChartView()
+                            .padding(.vertical)
+                    }
+                    
+                    TransactionPickerView(viewModel: viewModel, selection: $selection)
                     
                     if selection == 0 {
-                        TransactionStatisticsView(viewModel: viewModel)
+                        TransactionStatisticsView(viewModel: viewModel, selectedChart: selectedChart)
+                            .padding(.leading, 4)
                     } else {
                         TransactionHistoryView(viewModel: viewModel, selectedTransaction: $selectedTransaction, showActionSheet: $showActionSheet)
                             .padding(.horizontal)
@@ -101,7 +112,22 @@ struct HStackView: View {
     }
 }
 
-struct PickerView: View {
+struct ChartTypePickerView: View {
+    
+    @ObservedObject var viewModel: MainScreenViewModel
+    @Binding var selectedChart: ChartType
+    
+    var body: some View {
+        Picker("Test", selection: $selectedChart) {
+            Text("По дням").tag(ChartType.byDay)
+            Text("По категориям").tag(ChartType.byCategory)
+        }
+        .pickerStyle(.segmented)
+        .padding()
+    }
+}
+
+struct TransactionPickerView: View {
     
     @ObservedObject var viewModel: MainScreenViewModel
     @Binding var selection: Int
@@ -122,10 +148,24 @@ struct TransactionStatisticsView: View {
     
     @ObservedObject var viewModel: MainScreenViewModel
     
+    var selectedChart: ChartType
+    
     var body: some View {
-        LazyVStack(spacing: 12) {
-            ForEach(viewModel.cachedExpensesByCategory) { transaction in
-                HStackView(transactionTitle: transaction.title, categoryIcon: transaction.category.icon, amount: Int(transaction.amount))
+        LazyVStack(spacing: 16) {
+            if selectedChart == .byCategory {
+                ForEach(viewModel.cachedExpensesByCategory) { transaction in
+                    HStackView(transactionTitle: transaction.title, categoryIcon: transaction.category.icon, amount: Int(transaction.amount))
+                }
+            } else if selectedChart == .byDay {
+                ForEach(viewModel.cachedDailyExpenses.filter { $0.totalAmount != 0 }) { expense in
+                    HStack {
+                        Text(expense.date.formattedMonthCapitalized())
+                            .fontWeight(.medium)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Text("\(Int(expense.totalAmount).formatAmount())")
+                    }
+                }
             }
         }
         .padding(.horizontal)
@@ -145,7 +185,7 @@ struct TransactionHistoryView: View {
                 Section(header: Text(key)
                     .font(.subheadline)
                     .fontWeight(.medium)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 4)
                     .padding(.top)
