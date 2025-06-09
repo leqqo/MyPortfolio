@@ -32,7 +32,7 @@ struct CategoryView: View {
                 NavigationView {
                     AddCategoryView(viewModel: viewModel, selectedIcon: $selectedIcon, title: $title, isAddNewCategoryShow: $isAddNewCategoryShow)
                 }
-            
+                
             }
         }
     }
@@ -111,7 +111,7 @@ struct AddCategoryView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     let category = Category(title: title, icon: selectedIcon)
-                    ChartPieViewModel.shared.setColor(for: category.title, color: ChartPieViewModel.shared.generateRandomColor())
+                    ChartContentViewModel.shared.setColor(for: category.title, color: ChartContentViewModel.shared.generateRandomColor())
                     viewModel.categories.append(category)
                     title = ""
                     selectedIcon = ""
