@@ -1,5 +1,5 @@
 //
-//  ChartPieViewModel.swift
+//  ChartContentViewModel.swift
 //  ExpenseManager
 //
 //  Created by User on 01.04.2025.
@@ -8,14 +8,13 @@
 import Foundation
 import SwiftUI
 
-class ChartPieViewModel: ObservableObject {
+class ChartContentViewModel: ObservableObject {
     
-    static let shared = ChartPieViewModel()
-    init() { loadColors()
-        //UserDefaults.standard.removeObject(forKey: "categoryColors")
-    }
+    static let shared = ChartContentViewModel()
+    init() { loadColors() }
     
     var categoryColors: [String: String] = [
+        
         // Основные расходы
         "Продукты": Color.green.toHex(),
         "Кафе и рестораны": Color.brown.toHex(),
