@@ -23,17 +23,7 @@ struct MainScreenView: View {
         NavigationView {
             ScrollView {
                 VStack {
-                    ChartTypePickerView(viewModel: viewModel, selectedChart: $selectedChart)
-                        .padding(.top, 8)
-                    
-                    if selectedChart == .byDay {
-                        BarChartView()
-                            .padding(.vertical)
-                    } else if selectedChart == .byCategory{
-                        PieChartView()
-                            .padding(.vertical)
-                    }
-                    
+                    ChartContentView()
                     TransactionPickerView(viewModel: viewModel, selection: $selection)
                     
                     if selection == 0 {
@@ -109,21 +99,6 @@ struct HStackView: View {
             Text("\(amount.formatAmount())")
                 .fontWeight(.medium)
         }
-    }
-}
-
-struct ChartTypePickerView: View {
-    
-    @ObservedObject var viewModel: MainScreenViewModel
-    @Binding var selectedChart: ChartType
-    
-    var body: some View {
-        Picker("Test", selection: $selectedChart) {
-            Text("По дням").tag(ChartType.byDay)
-            Text("По категориям").tag(ChartType.byCategory)
-        }
-        .pickerStyle(.segmented)
-        .padding()
     }
 }
 
