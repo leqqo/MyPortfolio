@@ -50,16 +50,14 @@ class CalendarViewModel: ObservableObject {
         guard let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: currentDate)),
               let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, second: -1), to: startOfMonth)
         else { return }
-
+        
         selectedStartDate = startOfMonth
         selectedEndDate = endOfMonth
     }
-
+    
     func getDaysInYear() -> [(String, Date)] {
         let firstOfYear = calendar.date(from: calendar.dateComponents([.year], from: currentYear))!
-        
         guard let range = calendar.range(of: .day, in: .year, for: firstOfYear) else { return [] }
-        
         
         return range.compactMap { day -> (String, Date)? in
             if let date = calendar.date(byAdding: .day, value: day - 1, to: firstOfYear) {
@@ -69,7 +67,7 @@ class CalendarViewModel: ObservableObject {
             return nil
         }
     }
-
+    
     func getColor(for UI: String, date: Date) -> Color {
         if UI == "foreground" {
             if let start = selectedStartDate, let end = selectedEndDate, date >= start && date <= end {
@@ -93,13 +91,13 @@ class CalendarViewModel: ObservableObject {
         
         fatalError("Unexpected UI type: \(UI)")
     }
-
+    
     func changeYear(by offset: Int) {
         if let newYear = calendar.date(byAdding: .year, value: offset, to: currentYear) {
             currentYear = newYear
         }
     }
-
+    
     func selectDate(_ date: Date) {
         if selectedStartDate == nil {
             selectedStartDate = date
