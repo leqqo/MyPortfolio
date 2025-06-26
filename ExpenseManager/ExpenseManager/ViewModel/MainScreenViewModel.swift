@@ -12,7 +12,10 @@ class MainScreenViewModel: ObservableObject {
     
     static let shared = MainScreenViewModel()
 
-    private init() { loadTransactions() }
+    private init() { 
+        //UserDefaults.standard.removeObject(forKey: "transactions")
+        loadTransactions()
+    }
     
     @Published var transactions = [Transaction]() {
         didSet {
@@ -29,7 +32,6 @@ class MainScreenViewModel: ObservableObject {
     private func updateGroupedTransactions() {
         
         let now = Date()
-        
         let grouped = Dictionary(grouping: transactions) { transaction in
             
             let currentLocale = Locale.current.language.languageCode?.identifier
@@ -42,10 +44,10 @@ class MainScreenViewModel: ObservableObject {
                 } else if daysDifference == 1 {
                     return yesterday
                 } else if daysDifference < 1 {
-                    return transaction.date.formattedMonthCapitalized()
+                    return transaction.date.formattedMonthCapitalizedPlusYear()
                 }
             }
-            return transaction.date.formattedMonthCapitalized()
+            return transaction.date.formattedMonthCapitalizedPlusYear()
         }
         
         groupedTransactions = grouped.map { (key, value) in
@@ -105,19 +107,20 @@ class MainScreenViewModel: ObservableObject {
             let category = transactions.first!.category
             return CategoryExpense(category: category, amount: totalAmount)
         }
-        .sorted { $0.amount > $1.amount }
+        .sorted { $0.amount < $1.amount }
     }
     
     private func loadTransactions() {
-        if let data = UserDefaults.standard.data(forKey: "transactions") {
-            do {
-                transactions = try JSONDecoder().decode([Transaction].self, from: data)
-            } catch {
-                print("Не удалось загрузить транзакции: \(error)")
-            }
+
+        if let data = UserDefaults.standard.data(forKey: "transactions"),
+           let saved = try? JSONDecoder().decode([Transaction].self, from: data) {
+            self.transactions = saved
+        } else {
+            let mockData = generateMockTransactionsForYear()
+            self.transactions = mockData
         }
     }
-    
+
     private func saveTransactions() {
         do {
             let data = try JSONEncoder().encode(transactions)
@@ -125,6 +128,31 @@ class MainScreenViewModel: ObservableObject {
         } catch {
             print("Не удалось сохранить транзакции: \(error)")
         }
+    }
+    
+    private func generateMockTransactionsForYear() -> [Transaction] {
+        let calendar = Calendar.current
+        let now = Date()
+        let currentYear = calendar.component(.year, from: now)
+        
+        guard let startOfYear = calendar.date(from: DateComponents(year: currentYear, month: 1, day: 1)),
+              let range = calendar.range(of: .day, in: .year, for: startOfYear) else {
+            return []
+        }
+        
+        var transactions: [Transaction] = []
+        
+        for day in range {
+            let transactionCount = Int.random(in: 2...3)
+            for _ in 0..<transactionCount {
+                if let date = calendar.date(byAdding: .day, value: day - 1, to: startOfYear) {
+                    let amount = -Int.random(in: 50...2000)
+                    let category = Category.allCategories.randomElement()!
+                    transactions.append(Transaction(date: date, amount: amount, category: category))
+                }
+            }
+        }
+        return transactions
     }
 }
 
