@@ -45,7 +45,7 @@ struct ChartContentView: View {
                 chartContent(for: selectedChart)
             }
         }
-        .frame(height: 350, alignment: .top)
+        .frame(minHeight: 350, alignment: .top)
         .padding(.horizontal)
         .onAppear {
             calendarViewModel.setCurrentMonthRange()
@@ -84,6 +84,7 @@ struct ChartContentView: View {
             .foregroundStyle(chartViewModel.getColor(for: expense.category.title))
         }
         .chartLegend(.hidden)
+        .frame(height: 150)
     }
     
     @ViewBuilder
@@ -101,6 +102,7 @@ struct ChartContentView: View {
                 }
             }
         }
+        .padding(.top)
     }
     
     @ViewBuilder
@@ -175,16 +177,49 @@ struct ChartContentView: View {
 struct BarChartView: View {
     
     @ObservedObject private var viewModel: MainScreenViewModel = .shared
+    @State private var selectedDate: Date? = nil
+    @State private var rawSelectedDate: Date?
     
-    var body: some View {
-        Chart(viewModel.cachedDailyExpenses) { expense in
-            BarMark(
-                x: .value("Дата", expense.date, unit: .day),
-                y: .value("Сумма", abs(expense.totalAmount))
-            )
+    var selectedDailyExpense: DailyExpense? {
+        guard let rawSelectedDate else { return nil }
+        return viewModel.cachedDailyExpenses.first {
+            Calendar.current.isDate(rawSelectedDate, equalTo: $0.date, toGranularity: .day)
         }
+    }
+
+    var body: some View {
+        
+        Chart {
+            if let selectedDailyExpense {
+                RuleMark(x: .value("Selected Day", selectedDailyExpense.date, unit: .day))
+                    .foregroundStyle(.secondary.opacity(0.3))
+                    .annotation(position: .top, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
+                        if selectedDailyExpense.totalAmount != 0 {
+                            VStack {
+                                Text(selectedDailyExpense.date, format: .dateTime.month(.wide).day())
+                                    .bold()
+                                Text(Int(selectedDailyExpense.totalAmount).formatAmount())
+                                    .font(.title3.bold())
+                            }
+                            .foregroundColor(.white)
+                            .frame(width: 120)
+                            .padding(8)
+                            .background(RoundedRectangle(cornerRadius: 10).fill(.blue.opacity(0.85)))
+                        }
+                    }
+            }
+            
+            ForEach(viewModel.cachedDailyExpenses) { dailyExpense in
+                BarMark(
+                    x: .value("Дата", dailyExpense.date, unit: .day),
+                    y: .value("Сумма", abs(dailyExpense.totalAmount))
+                )
+                .opacity(dailyExpense.date == selectedDailyExpense?.date ? 1 : 0.5)
+            }
+        }
+        .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
         .chartXAxis {
-            AxisMarks(values: .stride(by: .day, count: 4)) { value in
+            AxisMarks() { value in
                 AxisValueLabel(format: .dateTime.day().month(.abbreviated))
             }
         }
@@ -193,7 +228,7 @@ struct BarChartView: View {
                 AxisGridLine()
                 AxisValueLabel() {
                     if let doubleValue = value.as(Double.self) {
-                        Text("\(Int(abs(doubleValue)))")
+                        Text(Int(-doubleValue).formatAmount())
                     }
                 }
             }
@@ -201,13 +236,14 @@ struct BarChartView: View {
     }
 }
 
+
 struct ChartTypePickerView: View {
     
     @ObservedObject private var viewModel: MainScreenViewModel = .shared
     @Binding var selectedChart: ChartType
     
     var body: some View {
-        Picker("Test", selection: $selectedChart) {
+        Picker("ChartType", selection: $selectedChart) {
             Text("По дням").tag(ChartType.byDay)
             Text("По категориям").tag(ChartType.byCategory)
         }
