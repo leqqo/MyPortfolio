@@ -8,8 +8,15 @@
 import SwiftUI
 
 struct SettingsView: View {
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Button(action: {
+                MainScreenViewModel.shared.transactions.removeAll()
+            }, label: {
+                Text("Удалить все транзакции")
+            })
+        }
     }
 }
 
