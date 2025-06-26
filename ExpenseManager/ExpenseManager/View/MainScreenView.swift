@@ -135,10 +135,10 @@ struct TransactionStatisticsView: View {
                 ForEach(viewModel.cachedDailyExpenses.filter { $0.totalAmount != 0 }) { expense in
                     HStack {
                         Text(expense.date.formattedMonthCapitalized())
-                            .fontWeight(.medium)
+                            .bold()
                             .foregroundStyle(.secondary)
                         Spacer()
-                        Text("\(Int(expense.totalAmount).formatAmount())")
+                        Text(Int(expense.totalAmount).formatAmount())
                     }
                 }
             }

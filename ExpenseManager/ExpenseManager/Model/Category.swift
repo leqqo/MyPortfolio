@@ -13,7 +13,6 @@ struct Category: Identifiable, Codable, Equatable, Hashable {
     var id = UUID()
     var title: String
     var icon: String
-
 }
 
 extension Color {

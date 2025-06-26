@@ -25,3 +25,4 @@ struct Transaction: Identifiable, Codable, Equatable {
         self.category = category
     }
 }
+
