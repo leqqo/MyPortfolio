@@ -84,7 +84,7 @@ struct EditTransactionView: View {
 }
 
 #Preview {
-    EditTransactionView(transaction: Transaction(amount: 150, category: Category(title: "Продукты", icon: "cart")))
+    EditTransactionView(transaction: Transaction(amount: 150, category: Category(title: "Продукты", icon: "cart", iconColor: Color.red.toHex())))
 }
 
 #Preview {

@@ -24,13 +24,12 @@ struct CategoryGridView: View {
                             selectedCategory = category
                         }
                     }) {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 2) {
                             Image(systemName: category.icon)
                                 .font(.title2)
                                 .frame(width: 46, height: 46)
-                                .foregroundColor(.blue)
+                                .foregroundStyle(Color.fromHex(category.iconColor))
                             Text(category.title)
-                                .font(.body)
                                 .foregroundStyle(.primary)
                         }
                         .padding(4)
@@ -46,5 +45,5 @@ struct CategoryGridView: View {
 }
 
 #Preview {
-    CategoryGridView(selectedCategory: .constant(Category(title: "Аптека", icon: "")))
+    CategoryGridView(selectedCategory: .constant(Category(title: "Аптека", icon: "", iconColor: Color.red.toHex())))
 }
