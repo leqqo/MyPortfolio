@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CategoryView: View {
     
-    @ObservedObject var viewModel = CategoryViewModel.shared
+    @ObservedObject var categoryViewModel = CategoryViewModel.shared
     
     @State private var isAddNewCategoryShow: Bool = false
     @State private var title = ""
@@ -18,10 +18,10 @@ struct CategoryView: View {
     var body: some View {
         NavigationView {
             VStack {
-                SearchBar(searchText: $viewModel.searchText)
+                SearchBar(searchText: $categoryViewModel.searchText)
                 ZStack {
-                    ListView(viewModel: viewModel, isAddNewCategoryShow: $isAddNewCategoryShow)
-                    if viewModel.filteredCategories.isEmpty {
+                    ListView(viewModel: categoryViewModel, isAddNewCategoryShow: $isAddNewCategoryShow)
+                    if categoryViewModel.filteredCategories.isEmpty {
                         Text("Ничего не найдено")
                             .foregroundColor(.gray)
                             .padding()
@@ -30,7 +30,7 @@ struct CategoryView: View {
             }
             .sheet(isPresented: $isAddNewCategoryShow) {
                 NavigationView {
-                    AddCategoryView(viewModel: viewModel, selectedIcon: $selectedIcon, title: $title, isAddNewCategoryShow: $isAddNewCategoryShow)
+                    AddCategoryView(selectedIcon: $selectedIcon, title: $title, isAddNewCategoryShow: $isAddNewCategoryShow)
                 }
                 
             }
@@ -44,7 +44,8 @@ struct CategoryView: View {
 
 struct AddCategoryView: View {
     
-    @ObservedObject var viewModel: CategoryViewModel
+    @ObservedObject var categoryViewModel = CategoryViewModel.shared
+    @ObservedObject var chartContentViewModel = ChartContentViewModel.shared
     
     @Binding var selectedIcon: String
     @Binding var title: String
@@ -57,7 +58,7 @@ struct AddCategoryView: View {
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 28) {
-                    ForEach(viewModel.iconSections) { section in
+                    ForEach(categoryViewModel.iconSections) { section in
                         VStack(alignment: .leading, spacing: 16) {
                             Text(section.title)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -110,9 +111,9 @@ struct AddCategoryView: View {
             
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    let category = Category(title: title, icon: selectedIcon)
-                    ChartContentViewModel.shared.setColor(for: category.title, color: ChartContentViewModel.shared.generateRandomColor())
-                    viewModel.categories.append(category)
+                    let category = Category(title: title, icon: selectedIcon, iconColor: categoryViewModel.getRandomColor())
+                    chartContentViewModel.setColor(for: category.title, color: ChartContentViewModel.shared.generateRandomColor())
+                    categoryViewModel.categories.append(category)
                     title = ""
                     selectedIcon = ""
                     isAddNewCategoryShow = false
@@ -133,7 +134,7 @@ struct ListView: View {
         List(viewModel.filteredCategories) { category in
             HStack(spacing: 16) {
                 Image(systemName: category.icon)
-                    .foregroundColor(.blue)
+                    .foregroundStyle(Color.fromHex(category.iconColor))
                     .font(.title2)
                     .frame(width: 28, height: 28)
                 Text(category.title)
@@ -156,6 +157,7 @@ struct ListView: View {
             }
         }
         .listStyle(.plain)
+        .listRowSpacing(16)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
