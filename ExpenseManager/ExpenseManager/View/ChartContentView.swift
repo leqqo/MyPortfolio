@@ -12,7 +12,7 @@ struct ChartContentView: View {
     
     @ObservedObject var calendarViewModel = CalendarViewModel.shared
     @ObservedObject var mainScreenViewModel = MainScreenViewModel.shared
-    @ObservedObject var chartViewModel = ChartContentViewModel.shared
+    @ObservedObject var chartContentViewModel = ChartContentViewModel.shared
     
     @State private var selectedChart: ChartType = .byDay
     
@@ -64,7 +64,11 @@ struct ChartContentView: View {
                     CalendarView()
                 }
         } else {
-            textView
+            HStack(spacing: 4) {
+                textView
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(.blue)
+            }
                 .onTapGesture {
                     calendarViewModel.isCalendarShow.toggle()
                 }
@@ -81,10 +85,10 @@ struct ChartContentView: View {
                 angle: .value("Сумма", expense.amount),
                 innerRadius: .ratio(0.5)
             )
-            .foregroundStyle(chartViewModel.getColor(for: expense.category.title))
+            .foregroundStyle(chartContentViewModel.getColor(for: expense.category.title))
         }
         .chartLegend(.hidden)
-        .frame(height: 150)
+        .frame(height: 200)
     }
     
     @ViewBuilder
@@ -93,7 +97,7 @@ struct ChartContentView: View {
             ForEach(mainScreenViewModel.cachedExpensesByCategory) { expense in
                 HStack {
                     Circle()
-                        .fill(chartViewModel.getColor(for: expense.category.title))
+                        .fill(chartContentViewModel.getColor(for: expense.category.title))
                         .frame(width: 12, height: 12)
                     
                     Text(expense.category.title)
@@ -157,7 +161,7 @@ struct ChartContentView: View {
                 noTransactions
             } else {
                 BarChartView()
-                    .padding(.top)
+                    .padding(.top, 6)
             }
             
         case .byCategory:
@@ -186,7 +190,7 @@ struct BarChartView: View {
             Calendar.current.isDate(rawSelectedDate, equalTo: $0.date, toGranularity: .day)
         }
     }
-
+    
     var body: some View {
         
         Chart {
@@ -219,7 +223,7 @@ struct BarChartView: View {
         }
         .chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
         .chartXAxis {
-            AxisMarks() { value in
+            AxisMarks(values: .stride(by: .day, count: 5)) { value in
                 AxisValueLabel(format: .dateTime.day().month(.abbreviated))
             }
         }
