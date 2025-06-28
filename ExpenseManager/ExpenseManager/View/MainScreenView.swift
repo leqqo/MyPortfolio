@@ -16,32 +16,24 @@ struct MainScreenView: View {
     @State private var showActionSheet: Bool = false
     @State var showEditView: Bool = false
     @State private var selectedTransaction: Transaction?
-    @State private var selection = 0
-    @State private var selectedChart: ChartType = .byDay
     
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack {
                     ChartContentView()
-                    TransactionPickerView(viewModel: viewModel, selection: $selection)
-                    
-                    if selection == 0 {
-                        TransactionStatisticsView(viewModel: viewModel, selectedChart: selectedChart)
-                            .padding(.leading, 4)
-                    } else {
-                        TransactionHistoryView(viewModel: viewModel, selectedTransaction: $selectedTransaction, showActionSheet: $showActionSheet)
-                            .padding(.horizontal)
-                            .confirmationDialog("Выберите действие", isPresented: $showActionSheet, titleVisibility: .hidden) {
-                                Button("Редактировать") {
-                                    showEditView = true
-                                }
-                                Button("Удалить", role: .destructive) {
-                                    deleteTransaction(transaction: selectedTransaction)
-                                }
-                                Button("Отмена", role: .cancel) { }
+                    TransactionHistoryView(viewModel: viewModel, selectedTransaction: $selectedTransaction, showActionSheet: $showActionSheet)
+                        .padding(.horizontal)
+                        .confirmationDialog("Выберите действие", isPresented: $showActionSheet, titleVisibility: .hidden) {
+                            Button("Редактировать") {
+                                showEditView = true
                             }
-                    }
+                            Button("Удалить", role: .destructive) {
+                                deleteTransaction(transaction: selectedTransaction)
+                            }
+                            Button("Отмена", role: .cancel) { }
+                        }
+                    
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -80,71 +72,23 @@ struct MainScreenView: View {
 
 struct HStackView: View {
     
-    var transactionTitle: String
-    var categoryIcon: String
-    var amount: Int
+    var transaction: Transaction
     
     var body: some View {
         HStack {
             Label(title: {
-                Text(transactionTitle)
+                Text(transaction.category.title)
             }, icon: {
-                Image(systemName: categoryIcon)
-                    .foregroundStyle(.blue)
+                Image(systemName: transaction.icon)
+                    .foregroundStyle(Color.fromHex(transaction.category.iconColor))
                     .font(.title2)
                     .frame(width: 32, height: 32)
                     .padding(.trailing, 2)
             })
             Spacer()
-            Text("\(amount.formatAmount())")
+            Text(transaction.amount.formatAmount())
                 .fontWeight(.medium)
         }
-    }
-}
-
-struct TransactionPickerView: View {
-    
-    @ObservedObject var viewModel: MainScreenViewModel
-    @Binding var selection: Int
-    
-    var body: some View {
-        Picker("Picker", selection: $selection) {
-            Text("Статистика").tag(0)
-            Text("История").tag(1)
-        }
-        .pickerStyle(.segmented)
-        .padding(.top)
-        .padding(.horizontal)
-        .opacity(viewModel.transactions.isEmpty ? 0 : 1)
-    }
-}
-
-struct TransactionStatisticsView: View {
-    
-    @ObservedObject var viewModel: MainScreenViewModel
-    
-    var selectedChart: ChartType
-    
-    var body: some View {
-        LazyVStack(spacing: 16) {
-            if selectedChart == .byCategory {
-                ForEach(viewModel.cachedExpensesByCategory) { transaction in
-                    HStackView(transactionTitle: transaction.title, categoryIcon: transaction.category.icon, amount: Int(transaction.amount))
-                }
-            } else if selectedChart == .byDay {
-                ForEach(viewModel.cachedDailyExpenses.filter { $0.totalAmount != 0 }) { expense in
-                    HStack {
-                        Text(expense.date.formattedMonthCapitalized())
-                            .bold()
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                        Text(Int(expense.totalAmount).formatAmount())
-                    }
-                }
-            }
-        }
-        .padding(.horizontal)
-        .padding(.top)
     }
 }
 
@@ -155,7 +99,7 @@ struct TransactionHistoryView: View {
     @Binding var showActionSheet: Bool
     
     var body: some View {
-        LazyVStack(spacing: 12) {
+        LazyVStack(spacing: 22) {
             ForEach(viewModel.groupedTransactions, id: \.key) { key, dayTransactions in
                 Section(header: Text(key)
                     .font(.subheadline)
@@ -166,9 +110,8 @@ struct TransactionHistoryView: View {
                     .padding(.top)
                 ) {
                     ForEach(dayTransactions) { transaction in
-                        HStackView(transactionTitle: transaction.category.title, categoryIcon: transaction.icon, amount: transaction.amount)
+                        HStackView(transaction: transaction)
                             .background(Color(uiColor: .systemBackground))
-                            .clipShape(Rectangle())
                             .onTapGesture {
                                 selectedTransaction = transaction
                                 showActionSheet.toggle()
