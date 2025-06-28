@@ -14,6 +14,7 @@ class CategoryViewModel: ObservableObject {
     private init() { loadCategories() }
     
     @Published var searchText: String = ""
+    
     let iconSections: [IconSection] = [
         IconSection(title: "Финансы и работа", icons: [
             "dollarsign.circle.fill",
@@ -111,42 +112,42 @@ class CategoryViewModel: ObservableObject {
     @Published var categories: [Category] = [
         
         // Основные расходы
-        Category(title: "Продукты", icon: "cart.fill"),
-        Category(title: "Кафе и рестораны", icon: "cup.and.saucer.fill"),
-        Category(title: "Одежда и обувь", icon: "tshirt.fill"),
-        Category(title: "Транспорт", icon: "car.fill"),
-        Category(title: "Жильё и коммуналка", icon: "house.fill"),
+        .groceries,
+        .cafes,
+        .clothing,
+        .transport,
+        .housing,
         
         // Быт
-        Category(title: "Бытовые товары", icon: "wrench.and.screwdriver.fill"),
-        Category(title: "Домашние животные", icon: "pawprint.fill"),
-        Category(title: "Подарки", icon: "gift.fill"),
-        Category(title: "Связь и интернет", icon: "wifi"),
+        .household,
+        .pets,
+        .gifts,
+        .internet,
         
         // Здоровье и красота
-        Category(title: "Здоровье", icon: "cross.case.fill"),
-        Category(title: "Аптека", icon: "pills.fill"),
-        Category(title: "Спорт и фитнес", icon: "figure.run.circle.fill"),
-        Category(title: "Уход за собой", icon: "scissors"),
+        .health,
+        .pharmacy,
+        .fitness,
+        .personalCare,
         
         // Образование и работа
-        Category(title: "Образование", icon: "book.fill"),
-        Category(title: "Работа и бизнес", icon: "briefcase.fill"),
+        .education,
+        .work,
         
         // Развлечения и досуг
-        Category(title: "Развлечения", icon: "gamecontroller.fill"),
-        Category(title: "Путешествия", icon: "airplane"),
-        Category(title: "Хобби", icon: "paintpalette.fill"),
+        .entertainment,
+        .travel,
+        .hobby,
         
         // Дети
-        Category(title: "Дети", icon: "figure.2.and.child.holdinghands"),
+        .children,
         
         // Финансовые обязательства
-        Category(title: "Кредиты и долги", icon: "creditcard.fill"),
-        Category(title: "Налоги и сборы", icon: "doc.plaintext.fill"),
+        .loans,
+        .taxes,
         
         // Прочее
-        Category(title: "Прочее", icon: "questionmark.circle.fill")
+        .other
     ] {
         didSet {
             saveCategories()
@@ -178,6 +179,12 @@ class CategoryViewModel: ObservableObject {
         } else {
             return categories.filter { $0.title.lowercased().contains(searchText.lowercased()) }
         }
+    }
+    
+    func getRandomColor() -> String {
+        let colors: [String] = [Color.red.toHex(), Color.blue.toHex(), Color.orange.toHex(), Color.brown.toHex(), Color.cyan.toHex(), Color.pink.toHex()
+        ]
+        return colors.randomElement()!
     }
 }
 
