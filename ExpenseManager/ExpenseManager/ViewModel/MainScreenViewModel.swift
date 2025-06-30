@@ -57,33 +57,28 @@ class MainScreenViewModel: ObservableObject {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         
-        let defaultStartDate = calendar.date(from: calendar.dateComponents([.year, .month], from: today))!
+        guard let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: today)),
+              let range = calendar.range(of: .day, in: .month, for: today),
+              let endOfMonth = calendar.date(bySetting: .day, value: range.count, of: startOfMonth) else {
+            return
+        }
         
-        let range = calendar.range(of: .day, in: .month, for: today)!
-        let lastDay = range.count
-        let endOfMonth = calendar.date(bySetting: .day, value: lastDay, of: defaultStartDate)!
-        let defaultEndDate = calendar.startOfDay(for: endOfMonth)
-
-        let allDates = stride(from: defaultStartDate, through: defaultEndDate, by: 60 * 60 * 24).map {
-            calendar.startOfDay(for: $0)
+        let allDates = stride(
+            from: startOfMonth,
+            through: endOfMonth,
+            by: 60 * 60 * 24
+        ).map { calendar.startOfDay(for: $0) }
+        
+        let grouped: [Date: Double] = Dictionary(grouping: transactions) {
+            calendar.startOfDay(for: $0.date)
+        }.mapValues {
+            $0.reduce(0) { $0 + Double($1.amount) }
         }
-
-        let filtered = transactions.filter { transaction in
-            let transactionDate = calendar.startOfDay(for: transaction.date)
-            return transactionDate >= defaultStartDate && transactionDate <= defaultEndDate
-        }
-
-        let grouped = Dictionary(grouping: filtered) { transaction in
-            calendar.startOfDay(for: transaction.date)
-        }.mapValues { transactions in
-            transactions.reduce(0) { $0 + Double($1.amount) }
-        }
-
-        cachedDailyExpenses = allDates.map { date in
-            DailyExpense(date: date, totalAmount: grouped[date] ?? 0)
+        
+        cachedDailyExpenses = allDates.map {
+            DailyExpense(date: $0, totalAmount: grouped[$0] ?? 0)
         }
     }
-
     
     func updateExpensesByCategory(singleDate: Date? = CalendarViewModel.shared.selectedStartDate, startDate: Date? = CalendarViewModel.shared.selectedStartDate, endDate: Date? = CalendarViewModel.shared.selectedEndDate) -> Void {
         
