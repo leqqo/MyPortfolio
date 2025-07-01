@@ -27,32 +27,29 @@ class MainScreenViewModel: ObservableObject {
     var groupedTransactions: [(key: String, value: [Transaction])] = []
     
     private func updateGroupedTransactions() {
-        
+        let calendar = Calendar.current
         let now = Date()
-        let grouped = Dictionary(grouping: transactions) { transaction in
-            
-            let currentLocale = Locale.current.language.languageCode?.identifier
-            let today = currentLocale == "ru" ? "Сегодня" : "Today"
-            let yesterday = currentLocale == "ru" ? "Вчера" : "Yesterday"
-            
-            if let daysDifference = Calendar.current.dateComponents([.day], from: transaction.date, to: now).day {
-                if daysDifference == 0 {
-                    return today
-                } else if daysDifference == 1 {
-                    return yesterday
-                } else if daysDifference < 1 {
-                    return transaction.date.formattedMonthCapitalizedPlusYear()
-                }
-            }
-            return transaction.date.formattedMonthCapitalizedPlusYear()
-        }
-        
-        groupedTransactions = grouped.map { (key, value) in
-            return (key: key, value: value)
+        let today = calendar.startOfDay(for: now)
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: today)!
+
+        let sortedGrouped = Dictionary(grouping: transactions) { transaction in
+            calendar.startOfDay(for: transaction.date)
         }
         .sorted { $0.key > $1.key }
+
+        groupedTransactions = sortedGrouped.map { (date, transactions) in
+            let label: String
+            if calendar.isDate(date, inSameDayAs: today) {
+                label = Locale.current.language.languageCode?.identifier == "ru" ? "Сегодня" : "Today"
+            } else if calendar.isDate(date, inSameDayAs: yesterday) {
+                label = Locale.current.language.languageCode?.identifier == "ru" ? "Вчера" : "Yesterday"
+            } else {
+                label = date.formattedMonthCapitalizedPlusYear()
+            }
+            return (key: label, value: transactions)
+        }
     }
-    
+
     private func calculateDailyExpenses() {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
@@ -114,7 +111,7 @@ class MainScreenViewModel: ObservableObject {
            let saved = try? JSONDecoder().decode([Transaction].self, from: data) {
             self.transactions = saved
         } else {
-            let mockData = generateMockTransactionsForYear()
+            let mockData = generateMockTransactions()
             self.transactions = mockData
         }
     }
@@ -128,30 +125,35 @@ class MainScreenViewModel: ObservableObject {
         }
     }
     
-    private func generateMockTransactionsForYear() -> [Transaction] {
+    private func generateMockTransactions() -> [Transaction] {
         let calendar = Calendar.current
         let now = Date()
         let currentYear = calendar.component(.year, from: now)
         
-        guard let startOfYear = calendar.date(from: DateComponents(year: currentYear, month: 1, day: 1)),
-              let range = calendar.range(of: .day, in: .year, for: startOfYear) else {
+        guard let startOfYear = calendar.date(from: DateComponents(year: currentYear, month: 1, day: 1)) else {
+            return []
+        }
+        
+        guard let dayCount = calendar.dateComponents([.day], from: startOfYear, to: now).day else {
             return []
         }
         
         var transactions: [Transaction] = []
         
-        for day in range {
+        for day in 0...dayCount {
             let transactionCount = Int.random(in: 2...5)
             for _ in 0..<transactionCount {
-                if let date = calendar.date(byAdding: .day, value: day - 1, to: startOfYear) {
+                if let date = calendar.date(byAdding: .day, value: day, to: startOfYear) {
                     let amount = -Int.random(in: 50...2000)
                     let category = Category.allCategories.randomElement()!
                     transactions.append(Transaction(date: date, amount: amount, category: category))
                 }
             }
         }
+        
         return transactions
     }
+
 }
 
 #Preview {
