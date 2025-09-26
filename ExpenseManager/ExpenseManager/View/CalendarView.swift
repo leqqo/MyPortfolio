@@ -22,21 +22,30 @@ struct CalendarView: View {
                 ScrollViewReader { proxy in
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: 46) {
-                            let groupedByMonth = Dictionary(grouping: viewModel.getDaysInYear(), by: { $0.0 })
-                            let monthOrder = calendar.monthSymbols
+                            // Группируем по месяцу, используя второй элемент кортежа (Date)
+                            let groupedByMonth = Dictionary(
+                                grouping: viewModel.getDaysInYear(),
+                                by: { calendar.component(.month, from: $0.1) } // берём месяц из Date
+                            )
                             
-                            ForEach(monthOrder.indices, id: \.self) { index in
-                                let month = monthOrder[index]
-                                if let dates = groupedByMonth[month] {
+                            ForEach(1...12, id: \.self) { monthIndex in
+                                if let items = groupedByMonth[monthIndex] {
                                     VStack(alignment: .leading) {
-                                        monthHeader(month: month, index: index)
-                                        calendarGrid(dates: dates)
+                                        // Название месяца
+                                        monthHeader(month: calendar.monthSymbols[monthIndex - 1],
+                                                    index: monthIndex - 1)
+                                        
+                                        // Вытаскиваем только Date из (String, Date) и сортируем
+                                        let dates = items.map { $0.1 }.sorted()
+                                        calendarGrid(dates: dates, calendar: calendar)
                                     }
                                 }
                             }
                         }
                         .padding()
                     }
+
+
                     .onAppear {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             viewModel.scrollToCurrentMonth(scrollViewProxy: proxy)
@@ -82,11 +91,16 @@ struct CalendarView: View {
         .padding()
     }
     
-    @ViewBuilder
+    
     var weekDays: some View {
+        // исходные сокращённые имена дней
         let weekDays = calendar.shortWeekdaySymbols
-        HStack {
-            ForEach(weekDays, id: \.self) { day in
+        
+        // сдвиг массива в зависимости от firstWeekday
+        let shifted = Array(weekDays[calendar.firstWeekday-1..<weekDays.count] + weekDays[0..<calendar.firstWeekday-1])
+        
+        return HStack {
+            ForEach(shifted, id: \.self) { day in
                 Text(day)
                     .frame(maxWidth: .infinity)
                     .font(.caption)
@@ -105,24 +119,40 @@ struct CalendarView: View {
                 .foregroundStyle(.blue)
                 .bold()
                 .padding(.bottom, 12)
-                .id(index)
+                .id(index + 1)
         }
     }
     
-    @ViewBuilder
-    func calendarGrid(dates: [(String, Date)]) -> some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7)) {
-            ForEach(dates, id: \.1) { (_, date) in
-                Button(action: { viewModel.selectDate(date) }) {
-                    Text("\(Calendar.current.component(.day, from: date))")
+    
+    func calendarGrid(dates: [Date], calendar: Calendar) -> some View {
+        let firstDay = dates.first!
+        let weekday = calendar.component(.weekday, from: firstDay) // 1 = Sunday, 2 = Monday...
+        
+        // Определяем сколько пустых ячеек нужно перед числами
+        let leadingEmptyDays = (weekday - calendar.firstWeekday + 7) % 7
+        
+        // Общий массив: пустые слоты + реальные даты
+        let items: [Date?] = Array(repeating: nil, count: leadingEmptyDays) + dates
+        
+        return LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7)) {
+            ForEach(0..<items.count, id: \.self) { index in
+                if let date = items[index] {
+                    Button(action: { viewModel.selectDate(date) }) {
+                        Text("\(calendar.component(.day, from: date))")
+                            .frame(width: 40, height: 40)
+                            .background(viewModel.getColor(for: "background", date: date))
+                            .clipShape(Circle())
+                            .foregroundColor(viewModel.getColor(for: "foreground", date: date))
+                    }
+                } else {
+                    // пустая ячейка
+                    Text("")
                         .frame(width: 40, height: 40)
-                        .background(viewModel.getColor(for: "background", date: date))
-                        .clipShape(Circle())
-                        .foregroundColor(viewModel.getColor(for: "foreground", date: date))
                 }
             }
         }
     }
+
 }
 
 #Preview {

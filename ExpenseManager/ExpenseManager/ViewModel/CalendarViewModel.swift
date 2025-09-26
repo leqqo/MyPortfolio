@@ -39,10 +39,10 @@ class CalendarViewModel: ObservableObject {
         let selectedYearInt = calendar.component(.year, from: currentYear)
         
         if currentYearInt == selectedYearInt {
-            let currentMonthIndex = calendar.component(.month, from: currentDate) - 1
+            let currentMonthIndex = calendar.component(.month, from: currentDate)
             scrollViewProxy.scrollTo(currentMonthIndex, anchor: .center)
         } else {
-            scrollViewProxy.scrollTo(0, anchor: .center)
+            scrollViewProxy.scrollTo(1, anchor: .center)
         }
     }
     

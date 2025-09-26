@@ -60,9 +60,6 @@ struct ChartContentView: View {
         
         if selectedChart == .byDay {
             textView
-                .sheet(isPresented: $calendarViewModel.isCalendarShow) {
-                    CalendarView()
-                }
         } else {
             HStack(spacing: 4) {
                 textView
