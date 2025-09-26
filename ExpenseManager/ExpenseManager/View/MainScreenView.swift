@@ -33,7 +33,6 @@ struct MainScreenView: View {
                             }
                             Button("Отмена", role: .cancel) { }
                         }
-                    
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -53,6 +52,7 @@ struct MainScreenView: View {
             AddExpenseView()
         })
     }
+    
     func editTransaction(transaction: Transaction?) {
         guard transaction != nil else { return }
         showEditView.toggle()
