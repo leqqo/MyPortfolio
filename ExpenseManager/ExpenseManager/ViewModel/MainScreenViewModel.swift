@@ -31,8 +31,14 @@ class MainScreenViewModel: ObservableObject {
         let now = Date()
         let today = calendar.startOfDay(for: now)
         let yesterday = calendar.date(byAdding: .day, value: -1, to: today)!
+        
+        // нижняя граница (14 дней назад)
+        let twoWeeksAgo = calendar.date(byAdding: .day, value: -14, to: today)!
 
-        let sortedGrouped = Dictionary(grouping: transactions) { transaction in
+        // фильтрация транзакций
+        let recentTransactions = transactions.filter { $0.date >= twoWeeksAgo }
+
+        let sortedGrouped = Dictionary(grouping: recentTransactions) { transaction in
             calendar.startOfDay(for: transaction.date)
         }
         .sorted { $0.key > $1.key }
@@ -49,6 +55,7 @@ class MainScreenViewModel: ObservableObject {
             return (key: label, value: transactions)
         }
     }
+
 
     private func calculateDailyExpenses() {
         let calendar = Calendar.current

@@ -99,26 +99,30 @@ struct TransactionHistoryView: View {
     @Binding var showActionSheet: Bool
     
     var body: some View {
-        LazyVStack(spacing: 22) {
-            ForEach(viewModel.groupedTransactions, id: \.key) { key, dayTransactions in
-                Section(header: Text(key)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.leading, 4)
-                    .padding(.top)
-                ) {
-                    ForEach(dayTransactions) { transaction in
-                        HStackView(transaction: transaction)
-                            .background(Color(uiColor: .systemBackground))
-                            .onTapGesture {
-                                selectedTransaction = transaction
-                                showActionSheet.toggle()
-                            }
+        VStack(alignment: .leading) {
+            Text("Последние транзакции")
+                .font(.title)
+            LazyVStack(spacing: 22) {
+                ForEach(viewModel.groupedTransactions, id: \.key) { key, dayTransactions in
+                    Section(header: Text(key)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 8)
+                    ) {
+                        ForEach(dayTransactions) { transaction in
+                            HStackView(transaction: transaction)
+                                .background(Color(uiColor: .systemBackground))
+                                .onTapGesture {
+                                    selectedTransaction = transaction
+                                    showActionSheet.toggle()
+                                }
+                        }
                     }
                 }
             }
         }
+        .padding(.top, 8)
     }
 }
